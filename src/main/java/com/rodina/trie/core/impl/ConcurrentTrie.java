@@ -1,5 +1,11 @@
 package com.rodina.trie.core.impl;
 
+import com.rodina.trie.contract.Trie;
+import com.rodina.trie.core.node.TrieNode;
+import com.rodina.trie.core.snapshot.TrieSnapshot;
+import com.rodina.trie.core.snapshot.TrieSnapshotManager;
+import com.rodina.trie.core.util.TrieIterator;
+import com.rodina.trie.exception.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -10,13 +16,6 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-
-import com.rodina.trie.contract.Trie;
-import com.rodina.trie.core.node.TrieNode;
-import com.rodina.trie.core.snapshot.TrieSnapshot;
-import com.rodina.trie.core.snapshot.TrieSnapshotManager;
-import com.rodina.trie.core.util.TrieIterator;
-import com.rodina.trie.exception.InvalidKeyException;
 
 public class ConcurrentTrie<V> implements Trie<V> {
   private final TrieNode<V> root;

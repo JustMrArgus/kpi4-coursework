@@ -9,11 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rodina.trie.api.dto.InsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-
-import com.rodina.trie.api.dto.InsertRequest;
 
 @DisplayName("Dictionary Controller CRUD Integration Tests")
 class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
@@ -55,14 +54,12 @@ class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
   @Test
   @DisplayName("Should empty trie when calling clear endpoint")
   void clearEndpointEmptiesTrie() throws Exception {
-    // Given
+
     insertEntry("alpha", "a");
     insertEntry("beta", "b");
 
-    // When
     mockMvc.perform(delete("/api/v1/dictionary/clear")).andExpect(status().isNoContent());
 
-    // Then (Check that keys list is empty)
     mockMvc
         .perform(get("/api/v1/dictionary/keys"))
         .andExpect(status().isOk())

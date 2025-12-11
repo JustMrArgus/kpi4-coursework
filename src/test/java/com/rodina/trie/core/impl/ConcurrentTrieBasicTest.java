@@ -3,15 +3,13 @@ package com.rodina.trie.core.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.rodina.trie.contract.Trie;
+import com.rodina.trie.exception.InvalidKeyException;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.contract.Trie;
-import com.rodina.trie.exception.InvalidKeyException;
 
 @DisplayName("Concurrent Trie Basic Tests")
 class ConcurrentTrieBasicTest {

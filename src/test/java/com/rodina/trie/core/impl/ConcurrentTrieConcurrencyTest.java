@@ -2,6 +2,7 @@ package com.rodina.trie.core.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.rodina.trie.contract.Trie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,11 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.contract.Trie;
 
 @DisplayName("Concurrent Trie Concurrency Tests")
 class ConcurrentTrieConcurrencyTest {

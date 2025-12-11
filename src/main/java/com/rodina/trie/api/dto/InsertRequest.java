@@ -1,10 +1,9 @@
 package com.rodina.trie.api.dto;
 
-import java.util.Objects;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.Objects;
 
 public class InsertRequest {
   @NotBlank(message = "Key cannot be blank")

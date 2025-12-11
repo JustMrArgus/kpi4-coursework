@@ -1,14 +1,14 @@
 package com.rodina.trie.core.property;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.rodina.trie.contract.Trie;
+import com.rodina.trie.core.impl.ConcurrentTrie;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.rodina.trie.contract.Trie;
-import com.rodina.trie.core.impl.ConcurrentTrie;
-
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Label;
 import net.jqwik.api.Property;
@@ -132,5 +132,22 @@ class ConcurrentTriePropertyBasedTest {
               + ", Actual: "
               + result.size());
     }
+  }
+
+  @Property
+  void verifyLargeKeyInvariants(@ForAll @StringLength(min = 1, max = 1200) String key) {
+    Trie<String> trie = new ConcurrentTrie<>();
+    String value = "value";
+
+    trie.insert(key, value);
+
+    assertThat(trie.search(key)).isPresent().contains(value);
+    assertThat(trie.has(key)).isTrue();
+
+    boolean deleted = trie.delete(key);
+
+    assertThat(deleted).isTrue();
+    assertThat(trie.search(key)).isEmpty();
+    assertThat(trie.has(key)).isFalse();
   }
 }

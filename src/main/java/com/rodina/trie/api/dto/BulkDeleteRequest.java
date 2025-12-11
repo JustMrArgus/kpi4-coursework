@@ -1,10 +1,9 @@
 package com.rodina.trie.api.dto;
 
-import java.util.List;
-import java.util.Objects;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.List;
+import java.util.Objects;
 
 public class BulkDeleteRequest {
   @NotEmpty(message = "Keys list cannot be empty")

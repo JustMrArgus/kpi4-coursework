@@ -6,12 +6,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rodina.trie.api.dto.InsertRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-
-import com.rodina.trie.api.dto.InsertRequest;
 
 @DisplayName("Dictionary Controller Constraints Integration Tests")
 class DictionaryControllerConstraintsIT extends AbstractDictionaryControllerIT {

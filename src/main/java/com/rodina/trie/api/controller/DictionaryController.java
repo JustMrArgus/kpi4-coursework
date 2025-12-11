@@ -1,11 +1,16 @@
 package com.rodina.trie.api.controller;
 
-import java.util.List;
-
+import com.rodina.trie.api.dto.BulkDeleteRequest;
+import com.rodina.trie.api.dto.BulkInsertRequest;
+import com.rodina.trie.api.dto.BulkOperationResponse;
+import com.rodina.trie.api.dto.DictionaryEntryDto;
+import com.rodina.trie.api.dto.InsertRequest;
+import com.rodina.trie.api.dto.PagedPrefixResponse;
+import com.rodina.trie.api.service.DictionaryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,14 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.rodina.trie.api.dto.BulkDeleteRequest;
-import com.rodina.trie.api.dto.BulkInsertRequest;
-import com.rodina.trie.api.dto.BulkOperationResponse;
-import com.rodina.trie.api.dto.DictionaryEntryDto;
-import com.rodina.trie.api.dto.InsertRequest;
-import com.rodina.trie.api.dto.PagedPrefixResponse;
-import com.rodina.trie.api.service.DictionaryService;
 
 @Validated
 @RestController

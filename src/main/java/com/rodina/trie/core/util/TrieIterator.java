@@ -1,13 +1,12 @@
 package com.rodina.trie.core.util;
 
+import com.rodina.trie.core.node.TrieNode;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
-
-import com.rodina.trie.core.node.TrieNode;
 
 public class TrieIterator<V> implements Iterator<Map.Entry<String, V>> {
   private final Deque<NodeState<V>> stack;

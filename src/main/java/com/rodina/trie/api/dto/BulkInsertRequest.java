@@ -1,11 +1,10 @@
 package com.rodina.trie.api.dto;
 
-import java.util.List;
-import java.util.Objects;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import java.util.List;
+import java.util.Objects;
 
 public class BulkInsertRequest {
   @NotEmpty(message = "Entries list cannot be empty")

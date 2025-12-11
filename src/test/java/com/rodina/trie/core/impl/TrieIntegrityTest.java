@@ -3,16 +3,14 @@ package com.rodina.trie.core.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+import com.rodina.trie.contract.Trie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.contract.Trie;
 
 @DisplayName("Trie Integrity Tests")
 class TrieIntegrityTest {

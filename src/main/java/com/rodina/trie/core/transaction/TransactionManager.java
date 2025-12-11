@@ -1,7 +1,6 @@
 package com.rodina.trie.core.transaction;
 
 import java.util.Stack;
-
 import org.springframework.stereotype.Component;
 
 @Component

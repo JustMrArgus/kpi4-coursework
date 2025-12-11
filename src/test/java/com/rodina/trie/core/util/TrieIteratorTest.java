@@ -2,17 +2,15 @@ package com.rodina.trie.core.util;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.rodina.trie.core.node.TrieNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.core.node.TrieNode;
 
 @DisplayName("TrieIterator Unit Tests")
 class TrieIteratorTest {

@@ -2,12 +2,11 @@ package com.rodina.trie.core.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.rodina.trie.contract.Trie;
+import com.rodina.trie.core.impl.ConcurrentTrie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.contract.Trie;
-import com.rodina.trie.core.impl.ConcurrentTrie;
 
 @DisplayName("Transaction Manager Basic Tests")
 class TransactionManagerBasicTest {

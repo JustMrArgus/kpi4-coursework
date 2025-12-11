@@ -1,11 +1,10 @@
 package com.rodina.trie.core.snapshot;
 
+import com.rodina.trie.core.node.TrieNode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.rodina.trie.core.node.TrieNode;
 
 public class TrieSnapshotManager<V> {
   private static final AtomicLong SNAPSHOT_ID_GENERATOR = new AtomicLong(0);

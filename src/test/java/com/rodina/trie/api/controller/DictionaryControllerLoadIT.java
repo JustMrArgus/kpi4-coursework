@@ -5,16 +5,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rodina.trie.api.dto.InsertRequest;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-
-import com.rodina.trie.api.dto.InsertRequest;
 
 @DisplayName("Dictionary Controller Load Integration Tests")
 class DictionaryControllerLoadIT extends AbstractDictionaryControllerIT {

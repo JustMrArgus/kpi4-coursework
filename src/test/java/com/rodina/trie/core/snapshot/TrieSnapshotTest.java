@@ -2,14 +2,12 @@ package com.rodina.trie.core.snapshot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.rodina.trie.core.impl.ConcurrentTrie;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.core.impl.ConcurrentTrie;
 
 @DisplayName("Trie Snapshot Tests")
 class TrieSnapshotTest {

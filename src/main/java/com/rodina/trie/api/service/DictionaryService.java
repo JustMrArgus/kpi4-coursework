@@ -1,14 +1,5 @@
 package com.rodina.trie.api.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.rodina.trie.api.dto.BulkDeleteRequest;
 import com.rodina.trie.api.dto.BulkInsertRequest;
 import com.rodina.trie.api.dto.BulkOperationResponse;
@@ -22,6 +13,13 @@ import com.rodina.trie.core.transaction.DeleteCommand;
 import com.rodina.trie.core.transaction.InsertCommand;
 import com.rodina.trie.core.transaction.TransactionManager;
 import com.rodina.trie.exception.NodeNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DictionaryService {

@@ -5,16 +5,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-
 import com.rodina.trie.api.dto.BulkDeleteRequest;
 import com.rodina.trie.api.dto.BulkInsertRequest;
 import com.rodina.trie.api.dto.InsertRequest;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 
 @DisplayName("Dictionary Controller Bulk Operations Integration Tests")
 class DictionaryControllerBulkIT extends AbstractDictionaryControllerIT {

@@ -1,17 +1,14 @@
 package com.rodina.trie.api.error;
 
-import java.util.stream.Collectors;
-
+import com.rodina.trie.exception.InvalidKeyException;
+import com.rodina.trie.exception.NodeNotFoundException;
 import jakarta.validation.ConstraintViolationException;
-
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.rodina.trie.exception.InvalidKeyException;
-import com.rodina.trie.exception.NodeNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

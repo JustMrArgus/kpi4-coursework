@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 
+import com.rodina.trie.exception.InvalidKeyException;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.exception.InvalidKeyException;
 
 @DisplayName("Concurrent Trie Advanced Tests")
 class ConcurrentTrieAdvancedTest {
@@ -29,6 +27,83 @@ class ConcurrentTrieAdvancedTest {
     trie.insert(unicodeKey, "hello");
     assertThat(trie.search(unicodeKey)).isPresent().contains("hello");
     assertThat(trie.has(unicodeKey)).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should handle empty string key correctly")
+  void emptyStringKeyBehavior() {
+    String key = "";
+    String value = "root-value";
+
+    trie.insert(key, value);
+
+    assertThat(trie.search(key)).isPresent().contains(value);
+    assertThat(trie.has(key)).isTrue();
+    assertThat(trie.size()).isEqualTo(1);
+
+    boolean deleted = trie.delete(key);
+
+    assertThat(deleted).isTrue();
+    assertThat(trie.search(key)).isEmpty();
+    assertThat(trie.has(key)).isFalse();
+    assertThat(trie.size()).isZero();
+  }
+
+  @Test
+  @DisplayName("Should return false when deleting empty key if not present")
+  void deleteEmptyKeyWhenNotPresent() {
+    boolean deleted = trie.delete("");
+    assertThat(deleted).isFalse();
+  }
+
+  @Test
+  @DisplayName("Should handle very large keys (1000 chars)")
+  void largeKeyOperations() {
+    String key = "a".repeat(1000);
+    Integer value = 123;
+
+    trie.insert(key, value);
+
+    assertThat(trie.search(key)).isPresent().contains(value);
+    assertThat(trie.size()).isEqualTo(1);
+
+    boolean deleted = trie.delete(key);
+
+    assertThat(deleted).isTrue();
+    assertThat(trie.search(key)).isEmpty();
+    assertThat(trie.size()).isZero();
+  }
+
+  @Test
+  @DisplayName("Should handle extremely large keys (5000 chars)")
+  void extremelyLargeKeyOperations() {
+    String key = "b".repeat(5000);
+    Integer value = 999;
+
+    trie.insert(key, value);
+
+    assertThat(trie.search(key)).isPresent().contains(value);
+    assertThat(trie.size()).isEqualTo(1);
+
+    trie.delete(key);
+    assertThat(trie.isEmpty()).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should return exactly limit number of results")
+  void autocompleteRespectsExactLimit() {
+    int totalItems = 100;
+    int limit = 10;
+    String prefix = "pref-";
+
+    for (int i = 0; i < totalItems; i++) {
+      trie.insert(String.format("%s%03d", prefix, i), i);
+    }
+
+    List<String> results = trie.autocomplete(prefix, limit);
+
+    assertThat(results).hasSize(limit);
+    assertThat(results).allMatch(s -> s.startsWith(prefix));
   }
 
   @Test

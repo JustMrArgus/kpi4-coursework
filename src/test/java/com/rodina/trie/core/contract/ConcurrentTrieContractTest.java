@@ -3,18 +3,16 @@ package com.rodina.trie.core.contract;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.rodina.trie.contract.Trie;
+import com.rodina.trie.core.impl.ConcurrentTrie;
+import com.rodina.trie.exception.InvalidKeyException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import com.rodina.trie.contract.Trie;
-import com.rodina.trie.core.impl.ConcurrentTrie;
-import com.rodina.trie.exception.InvalidKeyException;
 
 @DisplayName("Concurrent Trie Contract Tests")
 class ConcurrentTrieContractTest {
@@ -29,7 +27,7 @@ class ConcurrentTrieContractTest {
   @DisplayName("Should make key searchable after insertion")
   void insertMakesKeySearchable() {
     trie.insert("apple", "fruit");
-    
+
     Optional<String> lookup = trie.search("apple");
     assertThat(lookup).isPresent().contains("fruit");
     assertThat(trie.has("apple")).isTrue();
@@ -56,9 +54,9 @@ class ConcurrentTrieContractTest {
   @DisplayName("Should remove key after deletion")
   void deleteRemovesKey() {
     trie.insert("banana", "yellow");
-    
+
     boolean deleted = trie.delete("banana");
-    
+
     assertThat(deleted).isTrue();
     assertThat(trie.search("banana")).isEmpty();
     assertThat(trie.size()).isZero();
@@ -135,9 +133,9 @@ class ConcurrentTrieContractTest {
     void clearEmptiesTrie() {
       trie.insert("alpha", "1");
       trie.insert("beta", "2");
-      
+
       trie.clear();
-      
+
       assertThat(trie.isEmpty()).isTrue();
       assertThat(trie.size()).isZero();
       assertThat(trie.getAllKeys()).isEmpty();
@@ -182,7 +180,7 @@ class ConcurrentTrieContractTest {
     void manageSnapshots() {
       trie.insert("a", "1");
       long id1 = trie.createSnapshot();
-      
+
       trie.insert("b", "2");
       long id2 = trie.createSnapshot();
 

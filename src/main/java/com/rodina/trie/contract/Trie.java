@@ -1,11 +1,10 @@
 package com.rodina.trie.contract;
 
+import com.rodina.trie.core.snapshot.TrieSnapshot;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.rodina.trie.core.snapshot.TrieSnapshot;
 
 public interface Trie<V> extends Iterable<Map.Entry<String, V>> {
   void insert(String key, V value);
