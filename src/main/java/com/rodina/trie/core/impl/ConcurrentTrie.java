@@ -24,13 +24,13 @@ public class ConcurrentTrie<V> implements Trie<V> {
   private final AtomicLong globalVersion;
 
   public ConcurrentTrie() {
-    this.root = new TrieNode<>();
-    this.size = new AtomicInteger(0);
-    this.snapshotManager = new TrieSnapshotManager<>();
-    this.globalVersion = new AtomicLong(0);
+    this(10);
   }
 
   public ConcurrentTrie(int maxSnapshots) {
+    if (maxSnapshots <= 0) {
+      throw new IllegalArgumentException("Max snapshots must be greater than 0");
+    }
     this.root = new TrieNode<>();
     this.size = new AtomicInteger(0);
     this.snapshotManager = new TrieSnapshotManager<>(maxSnapshots);
@@ -38,10 +38,7 @@ public class ConcurrentTrie<V> implements Trie<V> {
   }
 
   public ConcurrentTrie(int maxSnapshots, int defaultMaxDistance) {
-    this.root = new TrieNode<>();
-    this.size = new AtomicInteger(0);
-    this.snapshotManager = new TrieSnapshotManager<>(maxSnapshots);
-    this.globalVersion = new AtomicLong(0);
+    this(maxSnapshots);
   }
 
   @Override
@@ -210,7 +207,7 @@ public class ConcurrentTrie<V> implements Trie<V> {
     if (child != null) {
       try {
         child.unlockRead();
-      } catch (Exception e) {
+      } catch (IllegalMonitorStateException e) {
       }
     }
   }
@@ -232,14 +229,14 @@ public class ConcurrentTrie<V> implements Trie<V> {
 
   @Override
   public boolean startsWith(String prefix) {
-    validateKey(prefix);
+    validatePrefix(prefix);
     TrieNode<V> node = findNode(prefix);
     return node != null;
   }
 
   @Override
   public List<Map.Entry<String, V>> searchByPrefix(String prefix) {
-    validateKey(prefix);
+    validatePrefix(prefix);
     TrieNode<V> prefixRoot = findNode(prefix);
     if (prefixRoot == null) {
       return Collections.emptyList();
@@ -254,7 +251,7 @@ public class ConcurrentTrie<V> implements Trie<V> {
 
   @Override
   public List<String> autocomplete(String prefix, int limit) {
-    validateKey(prefix);
+    validatePrefix(prefix);
     if (limit <= 0) {
       throw new IllegalArgumentException("Limit must be greater than 0");
     }
@@ -329,9 +326,16 @@ public class ConcurrentTrie<V> implements Trie<V> {
         if (currentNode.getChildrenCount() != 1 || currentNode.isEndOfWord()) {
           return prefix.toString();
         }
-        char nextChar = currentNode.getChildrenKeys().iterator().next();
+        Iterator<Character> it = currentNode.getChildrenKeys().iterator();
+        if (!it.hasNext()) {
+          return prefix.toString();
+        }
+        char nextChar = it.next();
         prefix.append(nextChar);
         TrieNode<V> nextNode = currentNode.getChild(nextChar);
+        if (nextNode == null) {
+          return prefix.substring(0, prefix.length() - 1);
+        }
         nextNode.lockRead();
         currentNode.unlockRead();
         currentNode = nextNode;
@@ -352,6 +356,15 @@ public class ConcurrentTrie<V> implements Trie<V> {
   private void validateKey(String key) {
     if (key == null) {
       throw new InvalidKeyException("Key cannot be null");
+    }
+    if (key.isEmpty()) {
+      throw new InvalidKeyException("Key cannot be empty");
+    }
+  }
+
+  private void validatePrefix(String prefix) {
+    if (prefix == null) {
+      throw new InvalidKeyException("Prefix cannot be null");
     }
   }
 
@@ -387,7 +400,9 @@ public class ConcurrentTrie<V> implements Trie<V> {
     root.lockWrite();
     try {
       root.clear();
-      copyFromSnapshot(root, snapshot.getRoot());
+      if (snapshot.getRoot() != null) {
+        copyFromSnapshot(root, snapshot.getRoot());
+      }
       size.set(snapshot.getSize());
       incrementGlobalVersion();
       return true;
@@ -397,12 +412,19 @@ public class ConcurrentTrie<V> implements Trie<V> {
   }
 
   private void copyFromSnapshot(TrieNode<V> target, TrieNode<V> source) {
+    if (source == null || target == null) {
+      return;
+    }
     target.setValue(source.getValue());
     target.setEndOfWord(source.isEndOfWord());
-    for (Map.Entry<Character, TrieNode<V>> entry : source.getChildrenMapDirect().entrySet()) {
-      TrieNode<V> childClone = new TrieNode<>();
-      copyFromSnapshot(childClone, entry.getValue());
-      target.setChild(entry.getKey(), childClone);
+
+    Map<Character, TrieNode<V>> children = source.getChildrenMapDirect();
+    if (children != null) {
+      for (Map.Entry<Character, TrieNode<V>> entry : children.entrySet()) {
+        TrieNode<V> childClone = new TrieNode<>();
+        copyFromSnapshot(childClone, entry.getValue());
+        target.setChild(entry.getKey(), childClone);
+      }
     }
   }
 
@@ -428,6 +450,9 @@ public class ConcurrentTrie<V> implements Trie<V> {
   @Override
   public boolean rollbackNodeToVersion(String key, long version) {
     validateKey(key);
+    if (version < 0) {
+      throw new IllegalArgumentException("Version cannot be negative");
+    }
     TrieNode<V> node = findNodeForWrite(key);
     if (node == null) {
       return false;
@@ -487,8 +512,11 @@ public class ConcurrentTrie<V> implements Trie<V> {
     node.lockWrite();
     try {
       node.clearSnapshotHistory();
-      for (TrieNode<V> child : node.getChildrenMapDirect().values()) {
-        clearNodeSnapshotHistoryRecursive(child);
+      Map<Character, TrieNode<V>> children = node.getChildrenMapDirect();
+      if (children != null) {
+        for (TrieNode<V> child : children.values()) {
+          clearNodeSnapshotHistoryRecursive(child);
+        }
       }
     } finally {
       node.unlockWrite();

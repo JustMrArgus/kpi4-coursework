@@ -30,34 +30,40 @@ class ConcurrentTrieAdvancedTest {
   }
 
   @Test
-  @DisplayName("Should handle empty string key correctly")
+  @DisplayName("Should throw InvalidKeyException when using empty string key")
   void emptyStringKeyBehavior() {
     String key = "";
     String value = "root-value";
 
-    trie.insert(key, value);
+    assertThatThrownBy(() -> trie.insert(key, value))
+        .isInstanceOf(InvalidKeyException.class)
+        .hasMessage("Key cannot be empty");
 
-    assertThat(trie.search(key)).isPresent().contains(value);
-    assertThat(trie.has(key)).isTrue();
-    assertThat(trie.size()).isEqualTo(1);
+    assertThatThrownBy(() -> trie.search(key))
+        .isInstanceOf(InvalidKeyException.class)
+        .hasMessage("Key cannot be empty");
 
-    boolean deleted = trie.delete(key);
+    assertThatThrownBy(() -> trie.has(key))
+        .isInstanceOf(InvalidKeyException.class)
+        .hasMessage("Key cannot be empty");
 
-    assertThat(deleted).isTrue();
-    assertThat(trie.search(key)).isEmpty();
-    assertThat(trie.has(key)).isFalse();
+    assertThatThrownBy(() -> trie.delete(key))
+        .isInstanceOf(InvalidKeyException.class)
+        .hasMessage("Key cannot be empty");
+
     assertThat(trie.size()).isZero();
   }
 
   @Test
-  @DisplayName("Should return false when deleting empty key if not present")
+  @DisplayName("Should throw exception when deleting empty key if not present")
   void deleteEmptyKeyWhenNotPresent() {
-    boolean deleted = trie.delete("");
-    assertThat(deleted).isFalse();
+    assertThatThrownBy(() -> trie.delete(""))
+        .isInstanceOf(InvalidKeyException.class)
+        .hasMessage("Key cannot be empty");
   }
 
   @Test
-  @DisplayName("Should handle very large keys (1000 chars)")
+  @DisplayName("Should handle large keys (1000 chars)")
   void largeKeyOperations() {
     String key = "a".repeat(1000);
     Integer value = 123;
