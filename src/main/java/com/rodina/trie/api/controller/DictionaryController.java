@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -118,5 +119,36 @@ public class DictionaryController {
   @GetMapping("/keys")
   public ResponseEntity<List<String>> getAllKeys() {
     return ResponseEntity.ok(dictionaryService.getAllKeys());
+  }
+
+  @PostMapping("/checkpoints")
+  public ResponseEntity<Long> createCheckpoint() {
+    long checkpointId = dictionaryService.createCheckpoint();
+    return new ResponseEntity<>(checkpointId, HttpStatus.CREATED);
+  }
+
+  @GetMapping("/checkpoints")
+  public ResponseEntity<Map<Long, Integer>> listCheckpoints() {
+    return ResponseEntity.ok(dictionaryService.listCheckpoints());
+  }
+
+  @PostMapping("/checkpoints/{id}/rollback")
+  public ResponseEntity<Void> rollbackToCheckpoint(@PathVariable long id) {
+    boolean success = dictionaryService.rollbackToCheckpoint(id);
+    if (success) {
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @DeleteMapping("/checkpoints/{id}")
+  public ResponseEntity<Void> deleteCheckpoint(@PathVariable long id) {
+    boolean deleted = dictionaryService.deleteCheckpoint(id);
+    if (deleted) {
+      return ResponseEntity.noContent().build();
+    } else {
+      return ResponseEntity.notFound().build();
+    }
   }
 }
