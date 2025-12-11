@@ -243,3 +243,59 @@ curl -s http://localhost:8080/api/v1/dictionary/keys
 ```
 
 Returns a JSON array of all keys stored in the dictionary.
+
+13. Create Checkpoint
+
+- POST /api/v1/dictionary/checkpoints
+
+Creates a snapshot of the current state of the trie in memory.
+
+Example:
+
+```bash
+curl -i -X POST http://localhost:8080/api/v1/dictionary/checkpoints
+```
+
+Response: 201 Created. The body contains the generated **Checkpoint ID** (e.g., `1`).
+
+14. List Checkpoints
+
+- GET /api/v1/dictionary/checkpoints
+
+Returns a map of all available checkpoints, where the key is the Checkpoint ID and the value is the size of the dictionary at that snapshot.
+
+Example:
+
+```bash
+curl -s http://localhost:8080/api/v1/dictionary/checkpoints
+```
+
+Response example: `{"1":5, "2":10}`
+
+15. Rollback to Checkpoint
+
+- POST /api/v1/dictionary/checkpoints/{id}/rollback
+
+Reverts the dictionary to the state stored in the specified checkpoint. **Note:** Any changes made after this checkpoint will be lost.
+
+Example (rolling back to checkpoint ID 1):
+
+```bash
+curl -i -X POST http://localhost:8080/api/v1/dictionary/checkpoints/1/rollback
+```
+
+Response: 200 OK on success, or 404 Not Found if the checkpoint ID does not exist.
+
+16. Delete Checkpoint
+
+- DELETE /api/v1/dictionary/checkpoints/{id}
+
+Deletes a specific checkpoint from memory to free up resources.
+
+Example (deleting checkpoint ID 1):
+
+```bash
+curl -i -X DELETE http://localhost:8080/api/v1/dictionary/checkpoints/1
+```
+
+Response: 204 No Content on success, or 404 Not Found if the ID is invalid.
