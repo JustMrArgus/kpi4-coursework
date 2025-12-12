@@ -6,7 +6,6 @@ import com.rodina.trie.api.dto.BulkOperationResponse;
 import com.rodina.trie.api.dto.BulkOperationResponse.BulkOperationError;
 import com.rodina.trie.api.dto.DictionaryEntryDto;
 import com.rodina.trie.api.dto.InsertRequest;
-import com.rodina.trie.api.dto.PagedPrefixResponse;
 import com.rodina.trie.contract.Trie;
 import com.rodina.trie.core.impl.ConcurrentTrie;
 import com.rodina.trie.core.transaction.DeleteCommand;
@@ -60,23 +59,6 @@ public class DictionaryService {
     return entries.stream()
         .map(entry -> new DictionaryEntryDto(entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
-  }
-
-  public PagedPrefixResponse searchByPrefixPaged(String prefix, int page, int size) {
-    List<Map.Entry<String, Object>> allEntries = trie.searchByPrefix(prefix);
-    long totalElements = allEntries.size();
-    int fromIndex = page * size;
-    int toIndex = Math.min(fromIndex + size, allEntries.size());
-    List<DictionaryEntryDto> content;
-    if (fromIndex >= allEntries.size()) {
-      content = new ArrayList<>();
-    } else {
-      content =
-          allEntries.subList(fromIndex, toIndex).stream()
-              .map(entry -> new DictionaryEntryDto(entry.getKey(), entry.getValue()))
-              .collect(Collectors.toList());
-    }
-    return new PagedPrefixResponse(content, page, size, totalElements);
   }
 
   public BulkOperationResponse bulkInsert(BulkInsertRequest request) {

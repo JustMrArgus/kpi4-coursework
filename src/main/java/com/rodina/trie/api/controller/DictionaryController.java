@@ -85,15 +85,6 @@ public class DictionaryController {
     return ResponseEntity.ok(result);
   }
 
-  @GetMapping("/prefix/paged")
-  public ResponseEntity<PagedPrefixResponse> searchByPrefixPaged(
-      @RequestParam String prefix,
-      @RequestParam(defaultValue = "0") @Min(0) int page,
-      @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-    PagedPrefixResponse result = dictionaryService.searchByPrefixPaged(prefix, page, size);
-    return ResponseEntity.ok(result);
-  }
-
   @DeleteMapping("/clear")
   public ResponseEntity<Void> clear() {
     dictionaryService.clear();

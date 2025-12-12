@@ -52,36 +52,6 @@ class DtoUnitTest {
   }
 
   @Nested
-  @DisplayName("PagedPrefixResponse Tests")
-  class PagedPrefixResponseTests {
-    @Test
-    @DisplayName("Should calculate pagination correctly")
-    void paginationCalculation() {
-      List<DictionaryEntryDto> content =
-          Arrays.asList(new DictionaryEntryDto("k1", "v1"), new DictionaryEntryDto("k2", "v2"));
-      PagedPrefixResponse response = new PagedPrefixResponse(content, 0, 10, 25);
-      assertThat(response.getTotalPages()).isEqualTo(3);
-      assertThat(response.isHasNext()).isTrue();
-      assertThat(response.isHasPrevious()).isFalse();
-    }
-
-    @Test
-    @DisplayName("Should handle last page")
-    void lastPage() {
-      PagedPrefixResponse response = new PagedPrefixResponse(Arrays.asList(), 2, 10, 25);
-      assertThat(response.isHasNext()).isFalse();
-      assertThat(response.isHasPrevious()).isTrue();
-    }
-
-    @Test
-    @DisplayName("Should handle zero size")
-    void zeroSize() {
-      PagedPrefixResponse response = new PagedPrefixResponse(Arrays.asList(), 0, 0, 0);
-      assertThat(response.getTotalPages()).isZero();
-    }
-  }
-
-  @Nested
   @DisplayName("Basic DTO Construction Tests")
   class BasicConstructionTests {
     @Test

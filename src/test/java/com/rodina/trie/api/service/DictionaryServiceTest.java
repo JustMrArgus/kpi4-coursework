@@ -130,34 +130,6 @@ class DictionaryServiceTest {
   }
 
   @Nested
-  @DisplayName("Paged Prefix Search Tests")
-  class PagedPrefixSearchTests {
-    @BeforeEach
-    void setUpData() {
-      for (int i = 0; i < 25; i++) {
-        service.insert(new InsertRequest("prefix" + String.format("%02d", i), "value" + i));
-      }
-    }
-
-    @Test
-    @DisplayName("Paged search returns correct pages")
-    void pagedSearchWorks() {
-      var page0 = service.searchByPrefixPaged("prefix", 0, 10);
-      assertThat(page0.getContent()).hasSize(10);
-      assertThat(page0.getTotalElements()).isEqualTo(25);
-
-      var page1 = service.searchByPrefixPaged("prefix", 1, 10);
-      assertThat(page1.getContent()).hasSize(10);
-
-      var page2 = service.searchByPrefixPaged("prefix", 2, 10);
-      assertThat(page2.getContent()).hasSize(5);
-
-      var pageN = service.searchByPrefixPaged("prefix", 10, 10);
-      assertThat(pageN.getContent()).isEmpty();
-    }
-  }
-
-  @Nested
   @DisplayName("Bulk Insert Tests")
   class BulkInsertTests {
     @Test
