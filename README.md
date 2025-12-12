@@ -196,19 +196,7 @@ curl -s "http://localhost:8080/api/v1/dictionary/prefix?prefix=app"
 
 Returns a JSON array of objects `{key, value}`.
 
-9. Prefix search (paged)
-
-- GET /api/v1/dictionary/prefix/paged?prefix=app&page=0&size=20
-
-Example:
-
-```bash
-curl -s "http://localhost:8080/api/v1/dictionary/prefix/paged?prefix=app&page=0&size=10"
-```
-
-Returns a `PagedPrefixResponse` containing `content`, `page`, `size`, and `totalElements`.
-
-10. Clear
+9. Clear
 
 - DELETE /api/v1/dictionary/clear
 
@@ -220,7 +208,7 @@ curl -i -X DELETE http://localhost:8080/api/v1/dictionary/clear
 
 Clears the whole trie. Response: 204 No Content.
 
-11. Starts-with check
+10. Starts-with check
 
 - GET /api/v1/dictionary/starts-with/{prefix}
 
@@ -232,7 +220,7 @@ curl -s http://localhost:8080/api/v1/dictionary/starts-with/app
 
 Returns JSON boolean indicating whether any key starts with the given prefix.
 
-12. Get all keys
+11. Get all keys
 
 - GET /api/v1/dictionary/keys
 
@@ -244,7 +232,7 @@ curl -s http://localhost:8080/api/v1/dictionary/keys
 
 Returns a JSON array of all keys stored in the dictionary.
 
-13. Create Checkpoint
+12. Create Checkpoint
 
 - POST /api/v1/dictionary/checkpoints
 
@@ -258,7 +246,7 @@ curl -i -X POST http://localhost:8080/api/v1/dictionary/checkpoints
 
 Response: 201 Created. The body contains the generated **Checkpoint ID** (e.g., `1`).
 
-14. List Checkpoints
+13. List Checkpoints
 
 - GET /api/v1/dictionary/checkpoints
 
@@ -272,7 +260,7 @@ curl -s http://localhost:8080/api/v1/dictionary/checkpoints
 
 Response example: `{"1":5, "2":10}`
 
-15. Rollback to Checkpoint
+14. Rollback to Checkpoint
 
 - POST /api/v1/dictionary/checkpoints/{id}/rollback
 
@@ -286,7 +274,7 @@ curl -i -X POST http://localhost:8080/api/v1/dictionary/checkpoints/1/rollback
 
 Response: 200 OK on success, or 404 Not Found if the checkpoint ID does not exist.
 
-16. Delete Checkpoint
+15. Delete Checkpoint
 
 - DELETE /api/v1/dictionary/checkpoints/{id}
 
