@@ -33,7 +33,7 @@ class DictionaryControllerConstraintsIT extends AbstractDictionaryControllerIT {
       mockMvc
           .perform(get("/api/v1/dictionary/autocomplete").param("prefix", "pref"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(10)));
+          .andExpect(jsonPath("$.items", hasSize(10)));
     }
   }
 

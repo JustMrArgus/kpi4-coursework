@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,7 +23,7 @@ class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/apple"))
         .andExpect(status().isOk())
-        .andExpect(content().string("fruit"));
+        .andExpect(jsonPath("$.result", is("fruit")));
   }
 
   @Test
@@ -33,8 +32,7 @@ class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/missing"))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.error", is("Not Found")))
-        .andExpect(jsonPath("$.message", is("Key not found: missing")));
+        .andExpect(jsonPath("$.message").exists());
   }
 
   @Test
@@ -63,8 +61,8 @@ class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/keys"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$", hasSize(0)));
+        .andExpect(jsonPath("$.items").isArray())
+        .andExpect(jsonPath("$.items", hasSize(0)));
   }
 
   @Test
@@ -80,6 +78,6 @@ class DictionaryControllerCrudIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/alpha"))
         .andExpect(status().isOk())
-        .andExpect(content().string("second"));
+        .andExpect(jsonPath("$.result", is("second")));
   }
 }

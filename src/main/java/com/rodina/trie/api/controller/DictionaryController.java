@@ -1,11 +1,6 @@
 package com.rodina.trie.api.controller;
 
-import com.rodina.trie.api.dto.BulkDeleteRequest;
-import com.rodina.trie.api.dto.BulkInsertRequest;
-import com.rodina.trie.api.dto.BulkOperationResponse;
-import com.rodina.trie.api.dto.DictionaryEntryDto;
-import com.rodina.trie.api.dto.InsertRequest;
-import com.rodina.trie.api.dto.PagedPrefixResponse;
+import com.rodina.trie.api.dto.*;
 import com.rodina.trie.api.service.DictionaryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -15,14 +10,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -54,9 +42,9 @@ public class DictionaryController {
   }
 
   @GetMapping("/{key}")
-  public ResponseEntity<Object> search(@PathVariable String key) {
+  public ResponseEntity<SearchResponse> search(@PathVariable String key) {
     Object result = dictionaryService.search(key);
-    return ResponseEntity.ok(result);
+    return ResponseEntity.ok(new SearchResponse(result));
   }
 
   @DeleteMapping("/{key}")
@@ -79,15 +67,16 @@ public class DictionaryController {
   }
 
   @GetMapping("/exists/{key}")
-  public ResponseEntity<Boolean> exists(@PathVariable String key) {
-    return ResponseEntity.ok(dictionaryService.exists(key));
+  public ResponseEntity<BooleanResponse> exists(@PathVariable String key) {
+    boolean exists = dictionaryService.exists(key);
+    return ResponseEntity.ok(new BooleanResponse(exists));
   }
 
   @GetMapping("/autocomplete")
-  public ResponseEntity<List<String>> autocomplete(
+  public ResponseEntity<StringListResponse> autocomplete(
       @RequestParam String prefix, @RequestParam(defaultValue = "10") @Min(1) @Max(100) int limit) {
     List<String> result = dictionaryService.autocomplete(prefix, limit);
-    return ResponseEntity.ok(result);
+    return ResponseEntity.ok(new StringListResponse(result));
   }
 
   @GetMapping("/prefix")
@@ -112,24 +101,27 @@ public class DictionaryController {
   }
 
   @GetMapping("/starts-with/{prefix}")
-  public ResponseEntity<Boolean> startsWith(@PathVariable String prefix) {
-    return ResponseEntity.ok(dictionaryService.startsWith(prefix));
+  public ResponseEntity<BooleanResponse> startsWith(@PathVariable String prefix) {
+    boolean startsWith = dictionaryService.startsWith(prefix);
+    return ResponseEntity.ok(new BooleanResponse(startsWith));
   }
 
   @GetMapping("/keys")
-  public ResponseEntity<List<String>> getAllKeys() {
-    return ResponseEntity.ok(dictionaryService.getAllKeys());
+  public ResponseEntity<StringListResponse> getAllKeys() {
+    List<String> keys = dictionaryService.getAllKeys();
+    return ResponseEntity.ok(new StringListResponse(keys));
   }
 
   @PostMapping("/checkpoints")
-  public ResponseEntity<Long> createCheckpoint() {
+  public ResponseEntity<CheckpointResponse> createCheckpoint() {
     long checkpointId = dictionaryService.createCheckpoint();
-    return new ResponseEntity<>(checkpointId, HttpStatus.CREATED);
+    return new ResponseEntity<>(new CheckpointResponse(checkpointId), HttpStatus.CREATED);
   }
 
   @GetMapping("/checkpoints")
-  public ResponseEntity<Map<Long, Integer>> listCheckpoints() {
-    return ResponseEntity.ok(dictionaryService.listCheckpoints());
+  public ResponseEntity<CheckpointListResponse> listCheckpoints() {
+    Map<Long, Integer> checkpoints = dictionaryService.listCheckpoints();
+    return ResponseEntity.ok(new CheckpointListResponse(checkpoints));
   }
 
   @PostMapping("/checkpoints/{id}/rollback")

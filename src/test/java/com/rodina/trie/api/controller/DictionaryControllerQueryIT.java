@@ -26,11 +26,11 @@ class DictionaryControllerQueryIT extends AbstractDictionaryControllerIT {
       mockMvc
           .perform(get("/api/v1/dictionary/exists/alpha"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", is(true)));
+          .andExpect(jsonPath("$.result", is(true)));
       mockMvc
           .perform(get("/api/v1/dictionary/exists/omega"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", is(false)));
+          .andExpect(jsonPath("$.result", is(false)));
     }
 
     @Test
@@ -42,8 +42,8 @@ class DictionaryControllerQueryIT extends AbstractDictionaryControllerIT {
       mockMvc
           .perform(get("/api/v1/dictionary/autocomplete").param("prefix", "ap").param("limit", "2"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(2)))
-          .andExpect(jsonPath("$[*]", everyItem(startsWith("ap"))));
+          .andExpect(jsonPath("$.items", hasSize(2)))
+          .andExpect(jsonPath("$.items[*]", everyItem(startsWith("ap"))));
     }
 
     @Test
@@ -71,7 +71,7 @@ class DictionaryControllerQueryIT extends AbstractDictionaryControllerIT {
       mockMvc
           .perform(get("/api/v1/dictionary/{key}", key))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", is("привіт")));
+          .andExpect(jsonPath("$.result", is("привіт")));
     }
 
     @Test
@@ -83,8 +83,8 @@ class DictionaryControllerQueryIT extends AbstractDictionaryControllerIT {
       mockMvc
           .perform(get("/api/v1/dictionary/autocomplete").param("prefix", "кі").param("limit", "5"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(2)))
-          .andExpect(jsonPath("$[*]", everyItem(startsWith("кі"))));
+          .andExpect(jsonPath("$.items", hasSize(2)))
+          .andExpect(jsonPath("$.items[*]", everyItem(startsWith("кі"))));
     }
   }
 }

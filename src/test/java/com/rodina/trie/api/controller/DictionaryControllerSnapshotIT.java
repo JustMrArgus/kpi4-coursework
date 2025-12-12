@@ -1,19 +1,41 @@
 package com.rodina.trie.api.controller;
 
-import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rodina.trie.api.dto.CheckpointListResponse;
+import com.rodina.trie.api.dto.CheckpointResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Dictionary Controller Snapshot Integration Tests")
 class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
+
+  @BeforeEach
+  void cleanupCheckpoints() throws Exception {
+    String responseString =
+        mockMvc
+            .perform(get("/api/v1/dictionary/checkpoints"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    CheckpointListResponse listResponse =
+        objectMapper.readValue(responseString, CheckpointListResponse.class);
+
+    for (CheckpointListResponse.CheckpointDto cp : listResponse.getCheckpoints()) {
+      mockMvc
+          .perform(delete("/api/v1/dictionary/checkpoints/" + cp.getId()))
+          .andExpect(status().isNoContent());
+    }
+  }
 
   @Test
   @DisplayName("Should create snapshot, modify data, and rollback successfully")
@@ -27,7 +49,9 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    long checkpointId = Long.parseLong(responseString);
+
+    CheckpointResponse response = objectMapper.readValue(responseString, CheckpointResponse.class);
+    long checkpointId = response.getCheckpointId();
 
     insertEntry("new", "value2");
     mockMvc.perform(delete("/api/v1/dictionary/original")).andExpect(status().isNoContent());
@@ -42,7 +66,7 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/original"))
         .andExpect(status().isOk())
-        .andExpect(content().string("value1"));
+        .andExpect(jsonPath("$.result", is("value1")));
 
     mockMvc.perform(get("/api/v1/dictionary/new")).andExpect(status().isNotFound());
   }
@@ -59,7 +83,9 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    long checkpointId = Long.parseLong(responseString);
+
+    CheckpointResponse response = objectMapper.readValue(responseString, CheckpointResponse.class);
+    long checkpointId = response.getCheckpointId();
 
     insertEntry("dirty", "data");
     mockMvc.perform(get("/api/v1/dictionary/dirty")).andExpect(status().isOk());
@@ -69,7 +95,7 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
         .andExpect(status().isOk());
 
     mockMvc.perform(get("/api/v1/dictionary/dirty")).andExpect(status().isNotFound());
-    mockMvc.perform(get("/api/v1/dictionary/keys")).andExpect(jsonPath("$").isEmpty());
+    mockMvc.perform(get("/api/v1/dictionary/keys")).andExpect(jsonPath("$.items").isEmpty());
   }
 
   @Test
@@ -83,6 +109,7 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
+    long id1 = objectMapper.readValue(cp1Str, CheckpointResponse.class).getCheckpointId();
 
     insertEntry("b", "2");
     String cp2Str =
@@ -92,14 +119,14 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
+    long id2 = objectMapper.readValue(cp2Str, CheckpointResponse.class).getCheckpointId();
 
     mockMvc
         .perform(get("/api/v1/dictionary/checkpoints"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasKey(cp1Str)))
-        .andExpect(jsonPath("$." + cp1Str, is(1)))
-        .andExpect(jsonPath("$", hasKey(cp2Str)))
-        .andExpect(jsonPath("$." + cp2Str, is(2)));
+        .andExpect(jsonPath("$.checkpoints", hasSize(2)))
+        .andExpect(jsonPath("$.checkpoints[?(@.id == " + id1 + ")].size").value(1))
+        .andExpect(jsonPath("$.checkpoints[?(@.id == " + id2 + ")].size").value(2));
   }
 
   @Test
@@ -112,7 +139,9 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    long checkpointId = Long.parseLong(responseString);
+
+    long checkpointId =
+        objectMapper.readValue(responseString, CheckpointResponse.class).getCheckpointId();
 
     mockMvc
         .perform(delete("/api/v1/dictionary/checkpoints/" + checkpointId))
@@ -121,7 +150,7 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
     mockMvc
         .perform(get("/api/v1/dictionary/checkpoints"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$." + checkpointId).doesNotExist());
+        .andExpect(jsonPath("$.checkpoints[?(@.id == " + checkpointId + ")]").doesNotExist());
   }
 
   @Test
@@ -134,7 +163,9 @@ class DictionaryControllerSnapshotIT extends AbstractDictionaryControllerIT {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    long checkpointId = Long.parseLong(responseString);
+
+    long checkpointId =
+        objectMapper.readValue(responseString, CheckpointResponse.class).getCheckpointId();
 
     mockMvc
         .perform(delete("/api/v1/dictionary/checkpoints/" + checkpointId))
