@@ -7,7 +7,6 @@ import com.rodina.trie.api.dto.BulkOperationResponse.BulkOperationError;
 import com.rodina.trie.api.dto.DictionaryEntryDto;
 import com.rodina.trie.api.dto.InsertRequest;
 import com.rodina.trie.contract.Trie;
-import com.rodina.trie.core.impl.ConcurrentTrie;
 import com.rodina.trie.core.transaction.DeleteCommand;
 import com.rodina.trie.core.transaction.InsertCommand;
 import com.rodina.trie.core.transaction.TransactionManager;
@@ -228,21 +227,13 @@ public class DictionaryService {
   }
 
   public long createCheckpoint() {
-    if (!(trie instanceof ConcurrentTrie)) {
-      throw new UnsupportedOperationException("Checkpoints are only supported with ConcurrentTrie");
-    }
-    ConcurrentTrie<Object> concurrentTrie = (ConcurrentTrie<Object>) trie;
-    long checkpointId = concurrentTrie.createSnapshot();
+    long checkpointId = trie.createSnapshot();
     logger.info("Memory checkpoint created: {}", checkpointId);
     return checkpointId;
   }
 
   public boolean rollbackToCheckpoint(long checkpointId) {
-    if (!(trie instanceof ConcurrentTrie)) {
-      throw new UnsupportedOperationException("Checkpoints are only supported with ConcurrentTrie");
-    }
-    ConcurrentTrie<Object> concurrentTrie = (ConcurrentTrie<Object>) trie;
-    boolean success = concurrentTrie.rollbackToSnapshot(checkpointId);
+    boolean success = trie.rollbackToSnapshot(checkpointId);
     if (success) {
       logger.info("Rolled back to checkpoint: {}", checkpointId);
     } else {
@@ -252,20 +243,12 @@ public class DictionaryService {
   }
 
   public Map<Long, Integer> listCheckpoints() {
-    if (!(trie instanceof ConcurrentTrie)) {
-      throw new UnsupportedOperationException("Checkpoints are only supported with ConcurrentTrie");
-    }
-    ConcurrentTrie<Object> concurrentTrie = (ConcurrentTrie<Object>) trie;
-    return concurrentTrie.getSnapshots().entrySet().stream()
+    return trie.getSnapshots().entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getSize()));
   }
 
   public boolean deleteCheckpoint(long checkpointId) {
-    if (!(trie instanceof ConcurrentTrie)) {
-      throw new UnsupportedOperationException("Checkpoints are only supported with ConcurrentTrie");
-    }
-    ConcurrentTrie<Object> concurrentTrie = (ConcurrentTrie<Object>) trie;
-    boolean deleted = concurrentTrie.deleteSnapshot(checkpointId);
+    boolean deleted = trie.deleteSnapshot(checkpointId);
     if (deleted) {
       logger.info("Checkpoint deleted: {}", checkpointId);
     }
