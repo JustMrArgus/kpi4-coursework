@@ -66,27 +66,30 @@ class ConcurrentTrieConcurrencyTest {
   void concurrentDeletesRemoveAllEntries() throws InterruptedException {
     int threadCount = 20;
     int itemsPerThread = 500;
+    int sharedKeyCount = itemsPerThread;
     Trie<Integer> trie = new ConcurrentTrie<>();
+    List<String> keysToDelete = new ArrayList<>(sharedKeyCount);
 
-    for (int i = 0; i < threadCount; i++) {
-      for (int j = 0; j < itemsPerThread; j++) {
-        trie.insert("key-" + i + "-" + j, j);
-      }
+    for (int i = 0; i < sharedKeyCount; i++) {
+      String key = "shared-" + i;
+      trie.insert(key, i);
+      keysToDelete.add(key);
     }
-    assertThat(trie.size()).isEqualTo(threadCount * itemsPerThread);
+    assertThat(trie.size()).isEqualTo(sharedKeyCount);
 
     ExecutorService executor = Executors.newFixedThreadPool(threadCount);
     CountDownLatch startLatch = new CountDownLatch(1);
     CountDownLatch endLatch = new CountDownLatch(threadCount);
 
     for (int i = 0; i < threadCount; i++) {
-      final int threadId = i;
+      List<String> threadKeys = new ArrayList<>(keysToDelete);
+      Collections.shuffle(threadKeys);
+
       executor.submit(
           () -> {
             try {
               startLatch.await();
-              for (int j = 0; j < itemsPerThread; j++) {
-                String key = "key-" + threadId + "-" + j;
+              for (String key : threadKeys) {
                 trie.delete(key);
               }
             } catch (InterruptedException e) {
@@ -98,7 +101,7 @@ class ConcurrentTrieConcurrencyTest {
     }
 
     startLatch.countDown();
-    endLatch.await();
+    endLatch.await(10, TimeUnit.SECONDS); 
     executor.shutdown();
 
     assertThat(trie.size()).isZero();
