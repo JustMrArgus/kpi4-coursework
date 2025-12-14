@@ -57,7 +57,7 @@ docker run -p 8080:8080 --rm concurrent-trie-dictionary
 Run unit and integration tests with:
 
 ```bash
-mvn test
+mvn verify
 ```
 
 ## Benchmarks (JMH)

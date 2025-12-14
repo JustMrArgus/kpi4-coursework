@@ -2,11 +2,13 @@ package com.rodina.trie.core.util;
 
 import com.rodina.trie.core.node.TrieNode;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.TreeMap;
 
 public class TrieIterator<V> implements Iterator<Map.Entry<String, V>> {
   private final Deque<NodeState<V>> stack;
@@ -31,13 +33,21 @@ public class TrieIterator<V> implements Iterator<Map.Entry<String, V>> {
       NodeState<V> currentState = stack.pop();
       TrieNode<V> currentNode = currentState.node;
       String currentPrefix = currentState.prefix;
+
       Map<Character, TrieNode<V>> childrenMap = currentNode.getChildrenMap();
-      TreeMap<Character, TrieNode<V>> sortedChildren = new TreeMap<>(childrenMap);
-      for (Map.Entry<Character, TrieNode<V>> entry : sortedChildren.descendingMap().entrySet()) {
-        TrieNode<V> childNode = entry.getValue();
-        String childPrefix = currentPrefix + entry.getKey();
-        stack.push(new NodeState<>(childNode, childPrefix));
+      if (childrenMap != null && !childrenMap.isEmpty()) {
+        List<Map.Entry<Character, TrieNode<V>>> sortedChildren =
+            new ArrayList<>(childrenMap.entrySet());
+
+        sortedChildren.sort(Map.Entry.comparingByKey(Comparator.reverseOrder()));
+
+        for (Map.Entry<Character, TrieNode<V>> entry : sortedChildren) {
+          TrieNode<V> childNode = entry.getValue();
+          String childPrefix = currentPrefix + entry.getKey();
+          stack.push(new NodeState<>(childNode, childPrefix));
+        }
       }
+
       if (currentNode.isEndOfWord() && currentNode.getValue() != null) {
         nextEntry = new TrieEntry<>(currentPrefix, currentNode.getValue());
         return;
