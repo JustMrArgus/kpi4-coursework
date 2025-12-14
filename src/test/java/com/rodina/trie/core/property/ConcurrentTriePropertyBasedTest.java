@@ -135,6 +135,7 @@ class ConcurrentTriePropertyBasedTest {
   }
 
   @Property
+  @Label("Trie maintains integrity with deep branches (up to 1200 chars)")
   void verifyLargeKeyInvariants(@ForAll @StringLength(min = 1, max = 1200) String key) {
     Trie<String> trie = new ConcurrentTrie<>();
     String value = "value";

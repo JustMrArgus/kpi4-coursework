@@ -33,20 +33,28 @@ class ConcurrentTrieLoadIT {
   void parallelInsertionsPreserveAllData() throws InterruptedException {
     int totalTasks = 2_000;
     ExecutorService pool = Executors.newFixedThreadPool(16);
-    CountDownLatch latch = new CountDownLatch(totalTasks);
+    CountDownLatch startLatch = new CountDownLatch(1);
+    CountDownLatch endLatch = new CountDownLatch(totalTasks);
+
     for (int i = 0; i < totalTasks; i++) {
       final int value = i;
       pool.submit(
           () -> {
             try {
+              startLatch.await();
               trie.insert("key-" + value, String.valueOf(value));
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
             } finally {
-              latch.countDown();
+              endLatch.countDown();
             }
           });
     }
-    boolean completed = latch.await(30, TimeUnit.SECONDS);
+
+    startLatch.countDown();
+    boolean completed = endLatch.await(30, TimeUnit.SECONDS);
     pool.shutdownNow();
+
     assertThat(completed).as("insertion tasks completed in time").isTrue();
     assertThat(trie.size()).isEqualTo(totalTasks);
     List<String> keys = trie.autocomplete("key-", totalTasks + 10);
@@ -60,20 +68,29 @@ class ConcurrentTrieLoadIT {
     List<String> keys =
         IntStream.range(0, iterations).mapToObj(i -> "word-" + i).collect(Collectors.toList());
     keys.forEach(key -> trie.insert(key, key));
+
     ExecutorService pool = Executors.newFixedThreadPool(12);
-    CountDownLatch latch = new CountDownLatch(iterations);
+    CountDownLatch startLatch = new CountDownLatch(1);
+    CountDownLatch endLatch = new CountDownLatch(iterations);
+
     keys.forEach(
         key ->
             pool.submit(
                 () -> {
                   try {
+                    startLatch.await();
                     trie.delete(key);
+                  } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                   } finally {
-                    latch.countDown();
+                    endLatch.countDown();
                   }
                 }));
-    boolean completed = latch.await(15, TimeUnit.SECONDS);
+
+    startLatch.countDown();
+    boolean completed = endLatch.await(15, TimeUnit.SECONDS);
     pool.shutdownNow();
+
     assertThat(completed).isTrue();
     assertThat(trie.size()).isZero();
     assertThat(trie.isEmpty()).isTrue();
@@ -97,21 +114,29 @@ class ConcurrentTrieLoadIT {
     assertThat(trie.size()).isEqualTo(keyCount);
 
     ExecutorService service = Executors.newFixedThreadPool(threadCount);
-    CountDownLatch latch = new CountDownLatch(threadCount);
+    CountDownLatch startLatch = new CountDownLatch(1);
+    CountDownLatch endLatch = new CountDownLatch(threadCount);
 
     for (int t = 0; t < threadCount; t++) {
       service.submit(
           () -> {
-            for (String key : keys) {
-              if (trie.delete(key)) {
-                successfulDeletes.get(key).incrementAndGet();
+            try {
+              startLatch.await();
+              for (String key : keys) {
+                if (trie.delete(key)) {
+                  successfulDeletes.get(key).incrementAndGet();
+                }
               }
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+            } finally {
+              endLatch.countDown();
             }
-            latch.countDown();
           });
     }
 
-    latch.await(10, TimeUnit.SECONDS);
+    startLatch.countDown();
+    endLatch.await(10, TimeUnit.SECONDS);
     service.shutdown();
 
     for (String key : keys) {

@@ -8,7 +8,7 @@ RUN mvn -B clean package -DskipTests
 FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /app
 
-COPY --from=builder /app/target/*.jar /app/app.jar
+COPY --from=builder /app/target/*-exec.jar /app/app.jar
 
 RUN addgroup --system triegroup \
     && adduser --system --ingroup triegroup --home /app trieuser \

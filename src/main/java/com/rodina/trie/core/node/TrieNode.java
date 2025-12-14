@@ -52,14 +52,6 @@ public class TrieNode<V> {
     this.writeLock.unlock();
   }
 
-  public boolean tryLockRead() {
-    return this.readLock.tryLock();
-  }
-
-  public boolean tryLockWrite() {
-    return this.writeLock.tryLock();
-  }
-
   public void readLockFromWriteLock() {
     this.readLock.lock();
   }

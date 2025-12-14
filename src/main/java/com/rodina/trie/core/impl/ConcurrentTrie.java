@@ -37,10 +37,6 @@ public class ConcurrentTrie<V> implements Trie<V> {
     this.globalVersion = new AtomicLong(0);
   }
 
-  public ConcurrentTrie(int maxSnapshots, int defaultMaxDistance) {
-    this(maxSnapshots);
-  }
-
   @Override
   public void insert(String key, V value) {
     validateKey(key);

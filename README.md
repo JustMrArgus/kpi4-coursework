@@ -60,13 +60,36 @@ Run unit and integration tests with:
 mvn test
 ```
 
+## Benchmarks (JMH)
+
+### How to run benchmarks:
+
+1.  **Install the main library** (so the benchmark module can see it):
+
+    ```bash
+    mvn clean install -DskipTests
+    ```
+
+2.  **Build the benchmark module**:
+
+    ```bash
+    cd benchmarks
+    mvn clean package
+    ```
+
+3.  **Run the benchmarks**:
+
+    ```bash
+    java -jar target/benchmarks.jar
+    ```
+
 ## API: endpoints and examples
 
 Base path: `/api/v1/dictionary`
 
 All examples assume the application is running on `http://localhost:8080`.
 
-1. Insert single entry
+1.  Insert single entry
 
 - POST /api/v1/dictionary
 
@@ -86,7 +109,7 @@ curl -i -X POST http://localhost:8080/api/v1/dictionary \
 
 Response: 201 Created on success.
 
-2. Bulk insert
+2.  Bulk insert
 
 - POST /api/v1/dictionary/bulk
 
@@ -112,7 +135,7 @@ curl -i -X POST http://localhost:8080/api/v1/dictionary/bulk \
 
 Response: 201 Created for full success, 207 Multi-Status for partial success, or 400 Bad Request for failure.
 
-3. Search by key
+3.  Search by key
 
 - GET /api/v1/dictionary/{key}
 
@@ -124,7 +147,7 @@ curl -s http://localhost:8080/api/v1/dictionary/apple
 
 Returns the stored value or structured result (JSON).
 
-4. Delete by key
+4.  Delete by key
 
 - DELETE /api/v1/dictionary/{key}
 
@@ -136,7 +159,7 @@ curl -i -X DELETE http://localhost:8080/api/v1/dictionary/apple
 
 Response: 204 No Content on success.
 
-5. Bulk delete
+5.  Bulk delete
 
 - DELETE /api/v1/dictionary/bulk
 
@@ -160,7 +183,7 @@ curl -i -X DELETE http://localhost:8080/api/v1/dictionary/bulk \
 
 Response: 200 OK, 207 Multi-Status, or 400 Bad Request depending on result.
 
-6. Exists
+6.  Exists
 
 - GET /api/v1/dictionary/exists/{key}
 
@@ -172,9 +195,9 @@ curl -s http://localhost:8080/api/v1/dictionary/exists/apple
 
 Returns JSON boolean: `true` or `false`.
 
-7. Autocomplete
+7.  Autocomplete
 
-- GET /api/v1/dictionary/autocomplete?prefix=ap&limit=10
+- GET /api/v1/dictionary/autocomplete?prefix=ap\&limit=10
 
 Example:
 
@@ -184,7 +207,7 @@ curl -s "http://localhost:8080/api/v1/dictionary/autocomplete?prefix=ap&limit=5"
 
 Returns a JSON array of string suggestions. `limit` defaults to 10 and is clamped between 1 and 100.
 
-8. Prefix search (all results)
+8.  Prefix search (all results)
 
 - GET /api/v1/dictionary/prefix?prefix=app
 
@@ -196,7 +219,7 @@ curl -s "http://localhost:8080/api/v1/dictionary/prefix?prefix=app"
 
 Returns a JSON array of objects `{key, value}`.
 
-9. Clear
+9.  Clear
 
 - DELETE /api/v1/dictionary/clear
 

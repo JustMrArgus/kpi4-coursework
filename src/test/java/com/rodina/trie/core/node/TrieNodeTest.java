@@ -108,12 +108,6 @@ class TrieNodeTest {
               })
           .doesNotThrowAnyException();
 
-      assertThat(node.tryLockRead()).isTrue();
-      node.unlockRead();
-
-      assertThat(node.tryLockWrite()).isTrue();
-      node.unlockWrite();
-
       node.lockWrite();
       try {
         node.readLockFromWriteLock();

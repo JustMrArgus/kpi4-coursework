@@ -2,6 +2,9 @@
 /build/
 /out/
 
+/benchmarks/target/
+/benchmarks/dependency-reduced-pom.xml
+
 .idea/
 *.iml
 *.ipr
