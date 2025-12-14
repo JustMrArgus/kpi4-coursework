@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class ConcurrentTrieConcurrencyTest {
 
   @Test
-  @DisplayName("Should preserve all entries during concurrent inserts (Start Gate enforced)")
+  @DisplayName("Should preserve all entries during concurrent inserts")
   void concurrentInsertsPreserveAllEntries() throws InterruptedException {
     int threadCount = 50;
     int itemsPerThread = 1000;
@@ -62,7 +62,7 @@ class ConcurrentTrieConcurrencyTest {
   }
 
   @Test
-  @DisplayName("Should remove all entries during concurrent deletes (Start Gate enforced)")
+  @DisplayName("Should remove all entries during concurrent deletes")
   void concurrentDeletesRemoveAllEntries() throws InterruptedException {
     int threadCount = 20;
     int itemsPerThread = 500;
@@ -148,7 +148,7 @@ class ConcurrentTrieConcurrencyTest {
   }
 
   @Test
-  @DisplayName("Should produce consistent state with mixed operations (Start Gate enforced)")
+  @DisplayName("Should produce consistent state with mixed operations")
   void mixedOperationsProduceConsistentState() throws InterruptedException {
     Trie<Integer> trie = new ConcurrentTrie<>();
     int threadCount = 100;

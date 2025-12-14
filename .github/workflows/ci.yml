@@ -38,3 +38,27 @@ jobs:
         with:
           push: false
           tags: concurrent-trie-dictionary:ci
+
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Install Core Library
+        run: mvn clean install -DskipTests
+
+      - name: Build Benchmarks Module
+        run: |
+          cd benchmarks
+          mvn clean package
+
+      - name: Run JMH Benchmarks
+        run: |
+          java -jar benchmarks/target/benchmarks.jar
